@@ -7,10 +7,26 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  --color-primary: #3b577d;
+  --color-on-primary: #ffffff;
 }
 
 body {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  background-color: var(--color-primary);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

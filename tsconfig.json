@@ -25,6 +25,9 @@
       ],
       "@/styles/*": [
         "src/styles/*"
+      ],
+      "@/view/*": [
+        "src/view/*"
       ]
     }
   },

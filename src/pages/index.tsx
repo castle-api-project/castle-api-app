@@ -1,12 +1,11 @@
 import dynamic from "next/dynamic";
 import React from "react";
 import { useState } from "react";
-import { useMemo } from "react";
 import { Rnd } from "react-rnd";
 
-import DataSet from "@/components/data_set";
-import MapLoading from "@/components/map_loading";
+import MapLoading from "@/view/map_loading";
 import styles from "@/styles/index.module.scss";
+import DataSetLoading from "@/view/data_set_loading";
 
 const App = () => {
   const [mapWindowWidth, setMapWindowWidth] = useState(50);
@@ -14,13 +13,25 @@ const App = () => {
   const MapPage = () => {
     const Map = React.useMemo(
       () =>
-        dynamic(() => import("../components/map"), {
+        dynamic(() => import("src/view/map"), {
           loading: () => <MapLoading />,
           ssr: false,
         }),
       [mapWindowWidth]
     );
     return <Map />;
+  };
+
+  const DataSetPage = () => {
+    const DataSet = React.useMemo(
+      () =>
+        dynamic(() => import("@/view/data_set"), {
+          loading: () => <DataSetLoading />,
+          ssr: false,
+        }),
+      []
+    );
+    return <DataSet />;
   };
 
   const mapResizeStop = (
@@ -41,7 +52,7 @@ const App = () => {
           width: "50%",
           height: "100%",
           x: 0,
-          y: -8,
+          y: 0,
         }}
         maxWidth={"90%"}
         minWidth={"10%"}
@@ -53,7 +64,7 @@ const App = () => {
         style={{ width: 100 - mapWindowWidth + "%" }}
         className={styles.data_container}
       >
-        <DataSet></DataSet>
+        <DataSetPage />
       </div>
     </>
   );
