@@ -1,0 +1,13 @@
+.map_container {
+    height: 100vh;
+    user-select: none;
+}
+
+.data_container {
+    height: 100vh;
+    background-color: #000;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: -1;
+}
