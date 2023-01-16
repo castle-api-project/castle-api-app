@@ -11,7 +11,22 @@ export const MapCenterAtom = atom({
   default: { lat: 35.1855, lng: 136.89939 },
 });
 
-export const CastleName = atom({
+export const CastleNameAtom = atom({
   key: "castleName",
+  default: "",
+});
+
+export const PrefNameAtom = atom({
+  key: "prefName",
+  default: "",
+});
+
+export const CityNameAtom = atom({
+  key: "CityName",
+  default: "",
+});
+
+export const AddressAtom = atom({
+  key: "address",
   default: "",
 });

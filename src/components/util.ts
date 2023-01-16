@@ -1,4 +1,6 @@
 import Leaflet from "leaflet";
+import { useRecoilState } from "recoil";
+import { AddressAtom, CityNameAtom, PrefNameAtom } from "@/components/atom";
 
 const parseToLatlng = (value: string | number) => {
   let num = 0;
@@ -14,3 +16,4 @@ export const digitDesignByLatlng = (
   const ll = { lat: parseToLatlng(latlng.lat), lng: parseToLatlng(latlng.lng) };
   return Leaflet.latLng(ll);
 };
+
