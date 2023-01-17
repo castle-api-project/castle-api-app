@@ -3,6 +3,11 @@ import Leaflet from "leaflet";
 
 export const LatlngAtom = atom({
   key: "latlng",
+  default: { lat: "", lng: "" },
+});
+
+export const MarkerPosAtom = atom({
+  key: "markerPos",
   default: Leaflet.latLng([35.1855, 136.89939]),
 });
 
@@ -14,6 +19,11 @@ export const MapCenterAtom = atom({
 export const CastleNameAtom = atom({
   key: "castleName",
   default: "",
+});
+
+export const AliasesAtom = atom({
+  key: "aliaess",
+  default: [""],
 });
 
 export const PrefNameAtom = atom({

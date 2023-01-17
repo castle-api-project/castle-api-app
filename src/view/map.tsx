@@ -15,6 +15,7 @@ import {
   CityNameAtom,
   LatlngAtom,
   MapCenterAtom,
+  MarkerPosAtom,
   PrefNameAtom,
 } from "@/components/atom";
 import "leaflet/dist/leaflet.css";
@@ -29,8 +30,9 @@ Leaflet.Marker.prototype.options.icon = Leaflet.icon({
 
 const Map = () => {
   const markerRef = useRef(null);
-  const [mapPosition, setMapPosition] = useRecoilState(MapCenterAtom);
-  const [markerPosition, setMarkerPosition] = useRecoilState(LatlngAtom);
+  const [mapPos, setMapPos] = useRecoilState(MapCenterAtom);
+  const [markerPos, setMarkerPos] = useRecoilState(MarkerPosAtom);
+  const [latlng, setLatlng] = useRecoilState(LatlngAtom);
   const [castleName, setCastleName] = useRecoilState(CastleNameAtom);
   const [prefName, setPrefName] = useRecoilState(PrefNameAtom);
   const [cityName, setCityName] = useRecoilState(CityNameAtom);
@@ -39,19 +41,17 @@ const Map = () => {
   const getAddressByLatlng = (latlng: { lat: number; lng: number }) => {
     const url = `https://geoapi.heartrails.com/api/json?method=searchByGeoLocation&x=${latlng.lng}&y=${latlng.lat}`;
 
-    fetch(url)
-      .then(async (response) => {
-        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+    fetch(url).then(async (response) => {
+      if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
 
-        const res = JSON.parse(await response.text());
-        const location = res.response.location[0];
+      const res = JSON.parse(await response.text());
+      if (!res.response.location) return;
+      const location = res.response.location[0];
 
-        console.log(location);
-        setPrefName(location.prefecture);
-        setCityName(location.city);
-        setAddress(location.prefecture + location.city + location.town);
-      })
-      .catch((error) => console.log(`Could not fetch verse: ${error}`));
+      setPrefName(location.prefecture);
+      setCityName(location.city);
+      setAddress(location.prefecture + location.city + location.town);
+    });
   };
 
   const eventHandlers = {
@@ -63,7 +63,8 @@ const Map = () => {
       const marker = markerRef.current;
       marker.setOpacity(1);
       const latlng = digitDesignByLatlng(marker.getLatLng());
-      setMarkerPosition(latlng);
+      setMarkerPos(latlng);
+      setLatlng({ lat: String(latlng.lat), lng: String(latlng.lng) });
       getAddressByLatlng(latlng);
     },
   };
@@ -72,18 +73,18 @@ const Map = () => {
     const map = useMapEvents({
       dblclick(e) {
         const latlng = digitDesignByLatlng(e.latlng);
-        setMarkerPosition(latlng);
+        setMarkerPos(latlng);
         getAddressByLatlng(latlng);
       },
       contextmenu() {
-        map.panTo(markerPosition);
+        map.panTo(markerPos);
       },
     });
 
     return (
       <Marker
         ref={markerRef}
-        position={markerPosition}
+        position={markerPos}
         draggable={true}
         eventHandlers={eventHandlers}
       >
@@ -94,7 +95,7 @@ const Map = () => {
 
   return (
     <MapContainer
-      center={[mapPosition.lat, mapPosition.lng]}
+      center={[mapPos.lat, mapPos.lng]}
       zoom={14}
       scrollWheelZoom={true}
       style={{ height: "100%", width: "100%" }}
