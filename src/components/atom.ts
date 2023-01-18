@@ -31,6 +31,11 @@ export const PrefNameAtom = atom({
   default: "",
 });
 
+export const AreaNameAtom = atom({
+  key: "areaName",
+  default: ""
+})
+
 export const CityNameAtom = atom({
   key: "CityName",
   default: "",

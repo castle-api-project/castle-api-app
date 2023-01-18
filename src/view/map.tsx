@@ -11,6 +11,7 @@ import icon from "leaflet/dist/images/marker-icon.png";
 import { useRecoilState } from "recoil";
 import {
   AddressAtom,
+  AreaNameAtom,
   CastleNameAtom,
   CityNameAtom,
   LatlngAtom,
@@ -19,7 +20,8 @@ import {
   PrefNameAtom,
 } from "@/components/atom";
 import "leaflet/dist/leaflet.css";
-import { digitDesignByLatlng } from "@/components/util";
+import { digitDesignByLatlng, latlngToStr } from "@/components/util";
+import { getAreaName } from "@/components/area";
 
 Leaflet.Marker.prototype.options.icon = Leaflet.icon({
   iconUrl: icon.src,
@@ -35,23 +37,34 @@ const Map = () => {
   const [latlng, setLatlng] = useRecoilState(LatlngAtom);
   const [castleName, setCastleName] = useRecoilState(CastleNameAtom);
   const [prefName, setPrefName] = useRecoilState(PrefNameAtom);
+  const [areaName, setAreaName] = useRecoilState(AreaNameAtom);
   const [cityName, setCityName] = useRecoilState(CityNameAtom);
   const [address, setAddress] = useRecoilState(AddressAtom);
 
-  const getAddressByLatlng = (latlng: { lat: number; lng: number }) => {
-    const url = `https://geoapi.heartrails.com/api/json?method=searchByGeoLocation&x=${latlng.lng}&y=${latlng.lat}`;
+  const getAddressByLatlng = ({ lat, lng }: { lat: number; lng: number }) => {
+    const url = `https://geoapi.heartrails.com/api/json?method=searchByGeoLocation&x=${lng}&y=${lat}`;
 
-    fetch(url).then(async (response) => {
-      if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+    fetch(url)
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
 
-      const res = JSON.parse(await response.text());
-      if (!res.response.location) return;
-      const location = res.response.location[0];
+        const res = JSON.parse(await response.text());
+        if (!res.response.location) {
+          setAreaName("なし");
+          setPrefName("なし");
+          setCityName("なし");
+          setAddress("なし");
+        } else {
+          const location = res.response.location[0];
+          const areaNameSnap = getAreaName(location.prefecture, location.city);
 
-      setPrefName(location.prefecture);
-      setCityName(location.city);
-      setAddress(location.prefecture + location.city + location.town);
-    });
+          setAreaName(areaNameSnap);
+          setPrefName(location.prefecture);
+          setCityName(location.city);
+          setAddress(location.prefecture + location.city + location.town);
+        }
+      })
+      .catch();
   };
 
   const eventHandlers = {
@@ -64,7 +77,7 @@ const Map = () => {
       marker.setOpacity(1);
       const latlng = digitDesignByLatlng(marker.getLatLng());
       setMarkerPos(latlng);
-      setLatlng({ lat: String(latlng.lat), lng: String(latlng.lng) });
+      setLatlng(latlngToStr(latlng));
       getAddressByLatlng(latlng);
     },
   };
@@ -74,6 +87,7 @@ const Map = () => {
       dblclick(e) {
         const latlng = digitDesignByLatlng(e.latlng);
         setMarkerPos(latlng);
+        setLatlng(latlngToStr(latlng));
         getAddressByLatlng(latlng);
       },
       contextmenu() {
