@@ -1,5 +1,4 @@
 import Leaflet, { LatLng } from "leaflet";
-import { getAreaName } from "./area";
 
 export const parseToLatlng = (value: string | number) => {
   let num = 0;

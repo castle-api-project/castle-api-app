@@ -20,6 +20,7 @@ import {
 } from "@/components/util";
 import React, { useState } from "react";
 import { getAreaName } from "@/components/area";
+import Leaflet from "leaflet";
 
 const DataSet = () => {
   const [castleName, setCastleName] = useRecoilState(CastleNameAtom);
@@ -83,6 +84,33 @@ const DataSet = () => {
           setPrefName(location.prefecture);
           setCityName(location.city);
           setAddress(location.prefecture + location.city + location.town);
+        }
+      })
+      .catch();
+  };
+
+  const getLatlngByPlaceName = (prefecture: string, city: string) => {
+    const areaNameSnap = getAreaName(prefecture, city);
+    setAreaName(areaNameSnap);
+    let url = "https://geoapi.heartrails.com/api/json?method=getTowns";
+
+    if (prefecture !== "") url += `&prefecture=${prefecture}`;
+    if (city !== "") url += `&city=${city}`;
+    else if (prefecture !== "") return;
+
+    fetch(url)
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+        const res = JSON.parse(await response.text());
+
+        if (!res.response.location) {
+          return;
+        } else {
+          const location = res.response.location[0];
+          console.log(location);
+          setMarkerPos(
+            Leaflet.latLng([Number(location.y), Number(location.x)])
+          );
         }
       })
       .catch();
@@ -266,6 +294,7 @@ const DataSet = () => {
           value={prefName}
           className={styles.input_value}
           onChange={(e) => setPrefName(e.target.value)}
+          onBlur={() => getLatlngByPlaceName(prefName, cityName)}
         />
       </div>
 
@@ -288,6 +317,7 @@ const DataSet = () => {
           value={cityName}
           className={styles.input_value}
           onChange={(e) => setCityName(e.target.value)}
+          onBlur={() => getLatlngByPlaceName(prefName, cityName)}
         />
       </div>
 

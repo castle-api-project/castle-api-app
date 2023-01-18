@@ -658,6 +658,7 @@ const Areas = {
 };
 
 export const getAreaName = (pref: string, city: string) => {
+  if (pref === "" || city === "") return "";
   if (!(pref in Areas)) return pref.replace(/都|府|県/g, "");
   city = city.replace(/^[\D]+郡/, "");
 
@@ -666,5 +667,5 @@ export const getAreaName = (pref: string, city: string) => {
     if (cities.includes(city)) return area;
   }
 
-  return "ERROR: 連絡してください";
+  return "見つかりませんでした";
 };
