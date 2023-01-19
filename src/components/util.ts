@@ -1,6 +1,6 @@
 import Leaflet, { LatLng } from "leaflet";
 
-export const parseToLatlng = (value: string | number) => {
+const parseToLatlng = (value: string | number) => {
   let num = 0;
   if (typeof value === "string") num = parseFloat(value);
   else num = value;

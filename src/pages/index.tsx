@@ -1,8 +1,6 @@
 import dynamic from "next/dynamic";
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Rnd } from "react-rnd";
-
 import MapLoading from "@/view/map_loading";
 import styles from "@/styles/index.module.scss";
 import DataSetLoading from "@/view/data_set_loading";
