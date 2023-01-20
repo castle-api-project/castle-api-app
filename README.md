@@ -1,7 +1,43 @@
-# Tauri + Next.js + Typescript
+# 日本の城APi.app
+日本の城API を作成するためのアプリです。
 
-This template should help get you started developing with Tauri, Next.js and Typescript.
+## 使い方
+基本的には順番に入力するだけです。
 
-## Recommended IDE Setup
+## 効率厨機能
+### 別名欄
+`,` `.` `、` `。` で区切って一度に入力すると自動で分割されます。
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+### 経緯度
+`北35.18552°, 東136.89957°`(MacOSのマップ) や  
+`北緯35度11分7.77秒 東経136度53分56.71秒`(Wikipedia)  
+の形式で入力すると自動で整形されます。
+
+### 位置情報 & マップ
+経緯度を入力するとマップのピンが入力した位置に移動します。
+
+都道府県と市区町村を入力すると地域欄に自動で入力され、マップが移動します。
+
+マップを右クリックするとマップがピンの位置まで移動します。
+
+マップをダブルクリックするとその位置にピンが移動し、経緯度や地名なども自動で入力されます。
+
+※住所は町名までしか入力されません。  
+※ネット環境が必要です
+
+
+## 入力規則
+### 都道府県
+`都` `道` `府` `県` をつけてください。
+
+### 市区町村
+`市` `町` `村` をつけてください。  
+政令指定都市の場合は `区` も必要です。  
+`郡` はつけないでください。
+
+### 参考資料
+あまり資料がない城の場合は参考にした **サイトのURL** や **書籍名** などを入力してください。  
+情報がある程度ある城の場合は不要です。
+
+## ライセンス
+[MIT](./LICENSE)
