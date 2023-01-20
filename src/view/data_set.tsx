@@ -317,7 +317,7 @@ const DataSet = () => {
     <div className={styles.container}>
       <div className={styles.item_box}>
         <p className={styles.title}>
-          <span>城名</span>
+          <span>城名*</span>
           <span className={styles.err_message}>{dataErrs.name}</span>
         </p>
         <input
@@ -369,7 +369,7 @@ const DataSet = () => {
 
       <div className={styles.item_box}>
         <p className={styles.title}>
-          <span>経緯度</span>
+          <span>経緯度*</span>
           <span className={styles.err_message}>{dataErrs.latlng}</span>
         </p>
         <div className={styles.input_box}>
@@ -414,7 +414,7 @@ const DataSet = () => {
 
       <div className={styles.item_box}>
         <p className={styles.title}>
-          <span>都道府県</span>
+          <span>都道府県*</span>
           <span className={styles.err_message}>{dataErrs.pref}</span>
         </p>
         <input
@@ -434,7 +434,7 @@ const DataSet = () => {
 
       <div className={styles.item_box}>
         <p className={styles.title}>
-          <span>地域</span>
+          <span>地域*</span>
           <span className={styles.err_message}>{dataErrs.area}</span>
         </p>
         <input
@@ -453,7 +453,7 @@ const DataSet = () => {
 
       <div className={styles.item_box}>
         <p className={styles.title}>
-          <span>市区町村</span>
+          <span>市区町村*</span>
           <span className={styles.err_message}>{dataErrs.city}</span>
         </p>
         <input
@@ -473,7 +473,7 @@ const DataSet = () => {
 
       <div className={styles.item_box}>
         <p className={styles.title}>
-          <span>住所</span>
+          <span>住所*</span>
           <span className={styles.err_message}>{dataErrs.address}</span>
         </p>
         <textarea
@@ -495,7 +495,7 @@ const DataSet = () => {
 
       <div className={styles.item_box}>
         <p className={styles.title}>
-          <span>築城年</span>
+          <span>築城年*</span>
           <span className={styles.err_message}>{dataErrs.build}</span>
         </p>
         <input
@@ -518,7 +518,7 @@ const DataSet = () => {
 
       <div className={styles.item_box}>
         <p className={styles.title}>
-          <span>規模</span>
+          <span>規模*</span>
           <span className={styles.err_message}>{dataErrs.scale}</span>
         </p>
         <div className={styles.radio_container}>
@@ -547,7 +547,7 @@ const DataSet = () => {
 
       <div className={styles.item_box}>
         <p className={styles.title}>
-          <span>城郭構造</span>
+          <span>城郭構造*</span>
           <span className={styles.err_message}>{dataErrs.type}</span>
         </p>
         <div className={styles.radio_container}>
@@ -570,7 +570,7 @@ const DataSet = () => {
 
       <div className={styles.item_box}>
         <p className={styles.title}>
-          <span>天守の存在</span>
+          <span>天守の存在*</span>
           <span className={styles.err_message}>{dataErrs.isTowerExist}</span>
         </p>
         <input
@@ -592,7 +592,7 @@ const DataSet = () => {
       {castleData.tower.isExist && (
         <div className={styles.item_box}>
           <p className={styles.title}>
-            <span>天守構造</span>
+            <span>天守構造*</span>
             <span className={styles.err_message}>
               {dataErrs.towerConstructure}
             </span>
@@ -729,6 +729,22 @@ const DataSet = () => {
           className={styles.input_value}
           onChange={(e) =>
             setCastleData({ ...castleData, site: e.target.value })
+          }
+        />
+      </div>
+
+      <div className={styles.item_box}>
+        <p className={styles.title}>
+          <span>参考資料</span>
+          <span className={styles.err_message}>{dataErrs.site}</span>
+        </p>
+        <input
+          type="text"
+          placeholder="書籍: マニアックな城1万選"
+          value={castleData.reference}
+          className={styles.input_value}
+          onChange={(e) =>
+            setCastleData({ ...castleData, reference: e.target.value })
           }
         />
       </div>

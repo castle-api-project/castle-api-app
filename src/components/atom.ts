@@ -42,6 +42,7 @@ export const CastleDataAtom = atom<CastleData>({
     restorations: [],
     categories: [],
     site: "",
+    reference: "",
   },
 });
 

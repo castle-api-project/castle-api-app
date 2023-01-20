@@ -121,4 +121,5 @@ export type CastleData = {
   restorations: Structures[];
   categories: Categories[];
   site: string;
+  reference: string;
 };
