@@ -1,4 +1,5 @@
 import Leaflet, { LatLng } from "leaflet";
+import { AreaName, Prefs } from "./area";
 
 const parseToLatlng = (value: string | number) => {
   let num = 0;
@@ -68,14 +69,16 @@ export const categories = [
 ] as const;
 export type Categories = typeof categories[number];
 
-export const towerConditionList = ["現存", "復元", "復興", "模擬", "非現像"] as const;
-
+export const towerConditionList = [
+  "現存",
+  "復元",
+  "復興",
+  "模擬",
+  "非現像",
+] as const;
 export type TowerCondtion = typeof towerConditionList[number];
 
-type scaleType = {
-  [index: number]: string;
-};
-export const scale: scaleType = {
+export const scale = {
   5: "城内が整備されている",
   4: "本丸周りは残っている",
   3: "一部の建物や堀・石垣・曲輪はある",
@@ -83,7 +86,6 @@ export const scale: scaleType = {
   1: "何も無い",
   0: "位置も曖昧",
 };
-export type Scale = keyof typeof scale;
 
 export const castleTypeList = [
   "山城",
@@ -95,3 +97,28 @@ export const castleTypeList = [
   "丘先式",
 ] as const;
 export type CastleType = typeof castleTypeList[number];
+
+export type CastleData = {
+  name: string;
+  alias: string[];
+  latlng: {
+    lat: string;
+    lng: string;
+  };
+  pref: string;
+  area: string;
+  city: string;
+  address: string;
+  build: string;
+  scale: number;
+  type: CastleType;
+  tower: {
+    isExist: boolean;
+    constructure: [number, number];
+    condition: TowerCondtion;
+  };
+  remains: Structures[];
+  restorations: Structures[];
+  categories: Categories[];
+  site: string;
+};

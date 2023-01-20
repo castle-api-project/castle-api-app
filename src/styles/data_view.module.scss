@@ -117,6 +117,7 @@
         white-space: nowrap;
         display: block;
         overflow: hidden;
+        cursor: pointer;
 
         span {
           width: calc(100% - 25px);

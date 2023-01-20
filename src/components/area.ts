@@ -718,7 +718,8 @@ export const Prefs = [
   "宮崎県",
   "鹿児島県",
   "沖縄県",
-];
+] as const;
+export type Prefs = typeof Prefs[number];
 
 export const AreaNames = [
   ...Prefs.map((pref) => {
@@ -726,3 +727,4 @@ export const AreaNames = [
     else return [pref.replace(/[都|道|府|県]/, "")];
   }).flat(),
 ];
+export type AreaName = typeof AreaNames[number];

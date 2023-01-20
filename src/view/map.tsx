@@ -7,11 +7,12 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
-import Leaflet from "leaflet";
+import Leaflet, { latLng } from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import { useRecoilState } from "recoil";
 import {
   CastleDataAtom,
+  DataErrsAtom,
   MapCenterPosAtom,
   MapZoomAtom,
   MarkerPosAtom,
@@ -32,6 +33,7 @@ const Map = () => {
   const [mapCenterPos, setMapCenterPos] = useRecoilState(MapCenterPosAtom);
   const [mapZoom, setMapZoom] = useRecoilState(MapZoomAtom);
   const [castleData, setCastleData] = useRecoilState(CastleDataAtom);
+  const [dataErrs, setDataErrs] = useRecoilState(DataErrsAtom);
   const markerRef = useRef(null);
 
   const getAddressByLatlng = ({ lat, lng }: { lat: number; lng: number }) => {
@@ -51,6 +53,14 @@ const Map = () => {
             address: "なし",
             latlng: { lat: String(lat), lng: String(lng) },
           });
+          setDataErrs({
+            ...dataErrs,
+            pref: "見つかりませんでした",
+            area: "見つかりませんでした",
+            city: "見つかりませんでした",
+            address: "見つかりませんでした",
+            latlng: "",
+          });
         } else {
           const location = res.response.location[0];
           const areaNameSnap = getAreaName(location.prefecture, location.city);
@@ -62,6 +72,14 @@ const Map = () => {
             city: location.city,
             address: location.prefecture + location.city + location.town,
             latlng: { lat: String(lat), lng: String(lng) },
+          });
+          setDataErrs({
+            ...dataErrs,
+            pref: "",
+            area: "",
+            city: "",
+            address: "",
+            latlng: "",
           });
         }
       })
@@ -94,6 +112,10 @@ const Map = () => {
         const latlng = digitDesignByLatlng(e.latlng);
         setMarkerPos(latlng);
         getAddressByLatlng(latlng);
+        setDataErrs({
+          ...dataErrs,
+          latlng: "",
+        });
       },
       contextmenu() {
         setMapCenterPos(markerPos);

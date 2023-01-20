@@ -1,6 +1,11 @@
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
-import { CastleDataAtom, MapCenterPosAtom, MarkerPosAtom } from "@/components/atom";
+import {
+  CastleDataAtom,
+  DataErrsAtom,
+  MapCenterPosAtom,
+  MarkerPosAtom,
+} from "@/components/atom";
 import styles from "@/styles/data_set.module.scss";
 import {
   castleTypeList,
@@ -13,7 +18,7 @@ import {
   structures,
   towerConditionList,
 } from "@/components/util";
-import React, { useState } from "react";
+import React from "react";
 import { AreaNames, getAreaName, Prefs } from "@/components/area";
 
 const DataSet = () => {
@@ -21,25 +26,7 @@ const DataSet = () => {
   const [markerPos, setMarkerPos] = useRecoilState(MarkerPosAtom);
   const [mapCenterPos, setMapCenterPos] = useRecoilState(MapCenterPosAtom);
   const [castleData, setCastleData] = useRecoilState(CastleDataAtom);
-  const [dataErrs, setDataErrs] = useState({
-    name: "",
-    alias: "",
-    latlng: "",
-    pref: "",
-    area: "",
-    city: "",
-    address: "",
-    build: "",
-    scale: "",
-    type: "",
-    isTowerExist: "",
-    towerConstructure: "",
-    remains: "",
-    restorations: "",
-    categories: "",
-    site: "",
-    submit: "",
-  });
+  const [dataErrs, setDataErrs] = useRecoilState(DataErrsAtom);
 
   const getAddressByLatlng = ({ lat, lng }: { lat: number; lng: number }) => {
     const url = `https://geoapi.heartrails.com/api/json?method=searchByGeoLocation&x=${lng}&y=${lat}`;
@@ -122,7 +109,7 @@ const DataSet = () => {
     errs.latlng = getLatlngErrMsg();
 
     // 都道府県
-    if (Prefs.includes(castleData.pref)) errs.pref = "";
+    if (Prefs.includes(castleData.pref as Prefs)) errs.pref = "";
     else if (castleData.pref === "") errs.pref = "都道府県名を入力してください";
     else if (!castleData.pref.match(/[都|道|府|県]$/))
       errs.pref = "「都」「道」「府」「県」を追加してください";
@@ -163,7 +150,7 @@ const DataSet = () => {
       }).length !== 0;
 
     if (isExistError) {
-      errs.submit = "間違いがあります";
+      errs.submit = "正しくないデータがあります";
       setDataErrs(errs);
     } else {
       router.push("/submit");
@@ -180,10 +167,10 @@ const DataSet = () => {
       return;
     }
     const latlngSnap = digitDesignByLatlng({ lat, lng });
-
-    setDataErrs({ ...dataErrs, latlng: getLatlngErrMsg() });
+    const latlngErr = getLatlngErrMsg();
+    if (latlngErr === "") setMarkerPos(latlngSnap);
+    setDataErrs({ ...dataErrs, latlng: latlngErr });
     setCastleData({ ...castleData, latlng: latlngToStr(latlngSnap) });
-    setMarkerPos(latlngSnap);
     getAddressByLatlng(digitDesignByLatlng(latlngSnap));
   };
 
@@ -297,15 +284,20 @@ const DataSet = () => {
               placeholder="別名"
               value={castleData.alias[i]}
               className={styles.input_value}
-              onChange={(e) =>
-                setCastleData({
-                  ...castleData,
-                  alias: castleData.alias.map((alias, index) => {
-                    if (index === i) return e.target.value;
+              onChange={(e) => {
+                const alias = [
+                  ...castleData.alias.map((alias, index) => {
+                    if (index === i)
+                      return e.target.value.split(/[.,、。]/).reverse();
                     else return alias;
                   }),
-                })
-              }
+                ];
+
+                setCastleData({
+                  ...castleData,
+                  alias: alias.flat(),
+                });
+              }}
               onBlur={onBlurAlias}
             />
           );
@@ -323,6 +315,8 @@ const DataSet = () => {
             placeholder="緯度"
             value={castleData.latlng.lat}
             onChange={(e) => {
+              console.log("change");
+
               const lat = String(e.target.value.match(/[\d]+.?[\d]*/));
               setCastleData({
                 ...castleData,
@@ -332,11 +326,7 @@ const DataSet = () => {
                 },
               });
             }}
-            onBlur={() => {
-              onBlurLatlng();
-              const errMsg = getLatlngErrMsg();
-              if (errMsg === "") setDataErrs({ ...dataErrs, latlng: "" });
-            }}
+            onBlur={onBlurLatlng}
           />
           <input
             type="text"
@@ -352,11 +342,7 @@ const DataSet = () => {
                 },
               });
             }}
-            onBlur={() => {
-              onBlurLatlng();
-              const errMsg = getLatlngErrMsg();
-              if (errMsg === "") setDataErrs({ ...dataErrs, latlng: "" });
-            }}
+            onBlur={onBlurLatlng}
           />
         </div>
       </div>
@@ -480,8 +466,10 @@ const DataSet = () => {
                     type="radio"
                     name="scale"
                     id={`scale_${key}`}
-                    checked={castleData.scale === key}
-                    onChange={() => setCastleData({ ...castleData, scale: key })}
+                    checked={castleData.scale === Number(key)}
+                    onChange={() =>
+                      setCastleData({ ...castleData, scale: Number(key) })
+                    }
                   />
                   <label htmlFor={`scale_${key}`}>
                     {key}:{scale[key]}

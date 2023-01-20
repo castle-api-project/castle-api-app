@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 import Leaflet from "leaflet";
-import { categories, structures } from "./util";
+import { CastleData } from "./util";
 
 export const MarkerPosAtom = atom({
   key: "markerPos",
@@ -17,7 +17,7 @@ export const MapZoomAtom = atom({
   default: 14,
 });
 
-export const CastleDataAtom = atom({
+export const CastleDataAtom = atom<CastleData>({
   key: "castleData",
   default: {
     name: "",
@@ -32,7 +32,7 @@ export const CastleDataAtom = atom({
     address: "",
     build: "",
     scale: 3,
-    type: [],
+    type: "平城",
     tower: {
       isExist: true,
       constructure: [0, 0],
@@ -42,5 +42,28 @@ export const CastleDataAtom = atom({
     restorations: [],
     categories: [],
     site: "",
+  },
+});
+
+export const DataErrsAtom = atom({
+  key: "data",
+  default: {
+    name: "",
+    alias: "",
+    latlng: "",
+    pref: "",
+    area: "",
+    city: "",
+    address: "",
+    build: "",
+    scale: "",
+    type: "",
+    isTowerExist: "",
+    towerConstructure: "",
+    remains: "",
+    restorations: "",
+    categories: "",
+    site: "",
+    submit: "",
   },
 });

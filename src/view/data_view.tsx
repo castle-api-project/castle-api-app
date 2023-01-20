@@ -1,3 +1,4 @@
+import { appWindow, WebviewWindow } from "@tauri-apps/api/window";
 import React from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -133,7 +134,19 @@ const DataView = () => {
 
           <div>
             <span className={styles.title}>サイト</span>
-            <div className={styles.site}>
+            <div
+              className={styles.site}
+              onClick={async () => {
+                const webview = new WebviewWindow("open-new-window", {
+                  url: "https://www.nagoyajo.city.nagoya.jp/",
+                });
+                const position = await appWindow.innerPosition();
+                position.x += 50;
+                position.y += 50;
+                await webview.setPosition(position);
+                await webview.setTitle(castleData.name);
+              }}
+            >
               <OpenInNewIcon className={styles.mui_icon} />
               <span>{castleData.site}</span>
             </div>
