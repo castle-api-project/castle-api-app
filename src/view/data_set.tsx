@@ -1,41 +1,25 @@
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
-import { CastleDataAtom, MarkerPosAtom } from "@/components/atom";
+import { CastleDataAtom, MapCenterPosAtom, MarkerPosAtom } from "@/components/atom";
 import styles from "@/styles/data_set.module.scss";
 import {
+  castleTypeList,
   categories,
   Categories,
   digitDesignByLatlng,
   latlngToStr,
+  scale,
   Structures,
   structures,
+  towerConditionList,
 } from "@/components/util";
 import React, { useState } from "react";
 import { AreaNames, getAreaName, Prefs } from "@/components/area";
-import Leaflet from "leaflet";
 
 const DataSet = () => {
-  const towerConditionList = ["現存", "復元", "復興", "模擬"] as const;
-  const scaleList = [
-    "5 : 城内が整備されている",
-    "4 : 本丸周りは残っている",
-    "3 : 一部の建物や堀・石垣・曲輪はある",
-    "2 : 看板のみある",
-    "1 : 何も無い",
-    "0 : 位置も曖昧",
-  ] as const;
-  const castleTypeList = [
-    "山城",
-    "平山城",
-    "平城",
-    "海城",
-    "湖城",
-    "面崖式",
-    "丘先式",
-  ] as const;
   const router = useRouter();
-
   const [markerPos, setMarkerPos] = useRecoilState(MarkerPosAtom);
+  const [mapCenterPos, setMapCenterPos] = useRecoilState(MapCenterPosAtom);
   const [castleData, setCastleData] = useRecoilState(CastleDataAtom);
   const [dataErrs, setDataErrs] = useState({
     name: "",
@@ -107,10 +91,7 @@ const DataSet = () => {
           return;
         } else {
           const location = res.response.location[0];
-          console.log(location);
-          setMarkerPos(
-            Leaflet.latLng([Number(location.y), Number(location.x)])
-          );
+          setMapCenterPos({ lat: Number(location.y), lng: Number(location.x) });
         }
       })
       .catch();
@@ -153,6 +134,8 @@ const DataSet = () => {
 
     // 市区町村
     if (castleData.city === "") errs.city = "入力してください";
+    else if (castleData.city.match(/^[\D]+郡/))
+      errs.city = "郡名は省略してください";
     else errs.city = "";
 
     // 住所
@@ -178,13 +161,6 @@ const DataSet = () => {
       Object.values(errs).filter((err) => {
         return err !== "";
       }).length !== 0;
-
-    console.log(isExistError);
-    console.log(
-      Object.values(errs).filter((err) => {
-        return err !== "";
-      })
-    );
 
     if (isExistError) {
       errs.submit = "間違いがあります";
@@ -224,7 +200,6 @@ const DataSet = () => {
     i: number
   ) => {
     const value = Number(e.target.value.slice(-1));
-    console.log(value);
     if (Number.isNaN(value)) return;
 
     const tower = structuredClone(castleData.tower);
@@ -436,8 +411,7 @@ const DataSet = () => {
           value={castleData.city}
           className={styles.input_value}
           onChange={(e) => {
-            const city = e.target.value.replace(/^[\D]+郡/, "");
-            setCastleData({ ...castleData, city });
+            setCastleData({ ...castleData, city: e.target.value });
           }}
           onBlur={() => {
             getLatlngByPlaceName(castleData.pref, castleData.city);
@@ -497,20 +471,24 @@ const DataSet = () => {
           <span className={styles.err_message}>{dataErrs.scale}</span>
         </p>
         <div className={styles.radio_container}>
-          {scaleList.map((scale, i) => {
-            return (
-              <div key={i}>
-                <input
-                  type="radio"
-                  name="scale"
-                  id={`scale_${i}`}
-                  checked={castleData.scale === 5 - i}
-                  onClick={() => setCastleData({ ...castleData, scale: 5 - i })}
-                />
-                <label htmlFor={`scale_${i}`}>{scale}</label>
-              </div>
-            );
-          })}
+          {Object.keys(scale)
+            .reverse()
+            .map((key) => {
+              return (
+                <div key={key}>
+                  <input
+                    type="radio"
+                    name="scale"
+                    id={`scale_${key}`}
+                    checked={castleData.scale === key}
+                    onChange={() => setCastleData({ ...castleData, scale: key })}
+                  />
+                  <label htmlFor={`scale_${key}`}>
+                    {key}:{scale[key]}
+                  </label>
+                </div>
+              );
+            })}
         </div>
       </div>
 
@@ -528,7 +506,7 @@ const DataSet = () => {
                   name="castle_type"
                   id={`type_${i}`}
                   checked={type === castleData.type}
-                  onClick={() => setCastleData({ ...castleData, type })}
+                  onChange={() => setCastleData({ ...castleData, type })}
                 />
                 <label htmlFor={`type_${i}`}>{type}</label>
               </div>
@@ -548,13 +526,13 @@ const DataSet = () => {
           checked={castleData.tower.isExist}
           className={styles.checkbox}
           onChange={() => {
-            const tower = castleData.tower;
+            const tower = structuredClone(castleData.tower);
             tower.isExist = !tower.isExist;
             setCastleData({ ...castleData, tower });
           }}
         />
         <label htmlFor="is_exist_tower" className={styles.is_exist}>
-          {castleData.tower.isExist ? "ある" : "ない"}
+          {castleData.tower.isExist ? "存在する(した)" : "存在しない"}
         </label>
       </div>
 
@@ -578,7 +556,7 @@ const DataSet = () => {
                   setDataErrs({ ...dataErrs, towerConstructure: "" });
               }}
             />
-            <span>重</span>
+            <span>層</span>
             <input
               type="text"
               value={castleData.tower.constructure[1]}
@@ -601,7 +579,7 @@ const DataSet = () => {
                     name="tower_condition"
                     id={`condition_${i}`}
                     checked={condition === castleData.tower.condition}
-                    onClick={() => {
+                    onChange={() => {
                       const tower = structuredClone(castleData.tower);
                       tower.condition = condition;
                       setCastleData({ ...castleData, tower });

@@ -1,9 +1,7 @@
 import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { Rnd } from "react-rnd";
-import MapLoading from "@/view/map_loading";
 import styles from "@/styles/index.module.scss";
-import DataSetLoading from "@/view/data_set_loading";
 
 const App = () => {
   const [mapWindowWidth, setMapWindowWidth] = useState(50);
@@ -12,7 +10,7 @@ const App = () => {
     const Map = React.useMemo(
       () =>
         dynamic(() => import("src/view/map"), {
-          loading: () => <MapLoading />,
+          loading: () => <></>,
           ssr: false,
         }),
       [mapWindowWidth]
@@ -24,7 +22,7 @@ const App = () => {
     const DataSet = React.useMemo(
       () =>
         dynamic(() => import("@/view/data_set"), {
-          loading: () => <DataSetLoading />,
+          loading: () => <></>,
           ssr: false,
         }),
       []

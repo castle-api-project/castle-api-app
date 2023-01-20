@@ -4,12 +4,18 @@ import {
   Marker,
   Popup,
   TileLayer,
+  useMap,
   useMapEvents,
 } from "react-leaflet";
 import Leaflet from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import { useRecoilState } from "recoil";
-import { CastleDataAtom, MarkerPosAtom } from "@/components/atom";
+import {
+  CastleDataAtom,
+  MapCenterPosAtom,
+  MapZoomAtom,
+  MarkerPosAtom,
+} from "@/components/atom";
 import "leaflet/dist/leaflet.css";
 import { digitDesignByLatlng, latlngToStr } from "@/components/util";
 import { getAreaName } from "@/components/area";
@@ -23,6 +29,8 @@ Leaflet.Marker.prototype.options.icon = Leaflet.icon({
 
 const Map = () => {
   const [markerPos, setMarkerPos] = useRecoilState(MarkerPosAtom);
+  const [mapCenterPos, setMapCenterPos] = useRecoilState(MapCenterPosAtom);
+  const [mapZoom, setMapZoom] = useRecoilState(MapZoomAtom);
   const [castleData, setCastleData] = useRecoilState(CastleDataAtom);
   const markerRef = useRef(null);
 
@@ -88,7 +96,14 @@ const Map = () => {
         getAddressByLatlng(latlng);
       },
       contextmenu() {
-        map.panTo(markerPos);
+        setMapCenterPos(markerPos);
+      },
+      dragend() {
+        setMapCenterPos(map.getCenter());
+      },
+      zoomend() {
+        setMapCenterPos(map.getCenter());
+        setMapZoom(map.getZoom());
       },
     });
 
@@ -104,6 +119,13 @@ const Map = () => {
     );
   };
 
+  const ChangeMapCenter = ({ lat, lng }: { lat: number; lng: number }) => {
+    const map = useMap();
+    map.panTo({ lat, lng });
+
+    return null;
+  };
+
   return (
     <MapContainer
       center={[35.1855, 136.89939]}
@@ -116,6 +138,7 @@ const Map = () => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      <ChangeMapCenter lat={mapCenterPos.lat} lng={mapCenterPos.lng} />
       <MarkerContainer />
     </MapContainer>
   );
