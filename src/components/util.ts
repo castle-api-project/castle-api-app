@@ -81,7 +81,7 @@ export type TowerCondtion = typeof towerConditionList[number];
 export const scale = {
   5: "城内が整備されている",
   4: "本丸周りは残っている",
-  3: "一部の建物や堀・石垣・曲輪はある",
+  3: "一部の構造物はある",
   2: "看板のみある",
   1: "何も無い",
   0: "位置も曖昧",

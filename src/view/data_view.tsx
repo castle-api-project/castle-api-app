@@ -103,6 +103,9 @@ const DataView = () => {
                   </span>
                 );
               })}
+              {castleData.remains.length === 0 && (
+                <span className={styles.item_remain}>なし</span>
+              )}
             </span>
           </div>
 
@@ -116,6 +119,9 @@ const DataView = () => {
                   </span>
                 );
               })}
+              {castleData.restorations.length === 0 && (
+                <span className={styles.item_restoration}>なし</span>
+              )}
             </span>
           </div>
 
@@ -129,27 +135,34 @@ const DataView = () => {
                   </span>
                 );
               })}
+              {castleData.categories.length === 0 && (
+                <span className={styles.item_category}>なし</span>
+              )}
             </span>
           </div>
 
           <div>
             <span className={styles.title}>サイト</span>
-            <div
-              className={styles.site}
-              onClick={async () => {
-                const webview = new WebviewWindow("open-new-window", {
-                  url: "https://www.nagoyajo.city.nagoya.jp/",
-                });
-                const position = await appWindow.innerPosition();
-                position.x += 50;
-                position.y += 50;
-                await webview.setPosition(position);
-                await webview.setTitle(castleData.name);
-              }}
-            >
-              <OpenInNewIcon className={styles.mui_icon} />
-              <span>{castleData.site}</span>
-            </div>
+            {castleData.site === "" ? (
+              <div className={styles.site}>なし</div>
+            ) : (
+              <div
+                className={styles.site}
+                onClick={async () => {
+                  const webview = new WebviewWindow("open-new-window", {
+                    url: "https://www.nagoyajo.city.nagoya.jp/",
+                  });
+                  const position = await appWindow.innerPosition();
+                  position.x += 50;
+                  position.y += 50;
+                  await webview.setPosition(position);
+                  await webview.setTitle(castleData.name);
+                }}
+              >
+                <OpenInNewIcon className={styles.mui_icon} />
+                <span>{castleData.site}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -162,7 +175,9 @@ const DataView = () => {
         <Link className={styles.return} href={"/"}>
           戻る
         </Link>
-        <span className={styles.confirm}>完了</span>
+        <Link className={styles.completion} href={"/completion"}>
+          完了
+        </Link>
       </div>
     </div>
   );

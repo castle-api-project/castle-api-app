@@ -1,0 +1,17 @@
+.completion_container {
+  height: 100vh;
+  width: 100vw;
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  .half_box {
+    width: 100%;
+
+    textarea {
+      height: 100%;
+      width: 100%;
+      font-size: 1rem;
+    }
+  }
+}
