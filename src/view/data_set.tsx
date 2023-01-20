@@ -39,10 +39,18 @@ const DataSet = () => {
         if (!res.response.location) {
           setCastleData({
             ...castleData,
-            pref: "なし",
-            area: "なし",
-            city: "なし",
-            address: "なし",
+            pref: "",
+            area: "",
+            city: "",
+            address: "",
+          });
+          setDataErrs({
+            ...dataErrs,
+            pref: "見つかりませんでした",
+            area: "見つかりませんでした",
+            city: "見つかりませんでした",
+            address: "見つかりませんでした",
+            latlng: "",
           });
         } else {
           const location = res.response.location[0];
@@ -54,6 +62,14 @@ const DataSet = () => {
             area: areaNameSnap,
             city: location.city,
             address: location.prefecture + location.city + location.town,
+          });
+          setDataErrs({
+            ...dataErrs,
+            pref: "",
+            area: "",
+            city: "",
+            address: "",
+            latlng: "",
           });
         }
       })
@@ -140,7 +156,7 @@ const DataSet = () => {
     if (castleData.tower.isExist) {
       const constructure = castleData.tower.constructure;
       if (constructure[0] === 0 || constructure[1] === 0)
-        errs.towerConstructure = "0は指定できません";
+        errs.towerConstructure = "入力してください";
       else errs.towerConstructure = "";
     }
 
@@ -250,6 +266,53 @@ const DataSet = () => {
     }
   };
 
+  const strToLatlng = (value: string) => {
+    if (value.match(/^[北|南][\d]+.?[\d]*°, [東|西][\d]+.?[\d]*°$/)) {
+      const latlng = value
+        .replace(/[北|東|°| ]/g, "")
+        .replace(/[南|西]/g, "-")
+        .split(",");
+
+      setCastleData({
+        ...castleData,
+        latlng: {
+          lat: latlng[0],
+          lng: latlng[1],
+        },
+      });
+      return true;
+    } else if (
+      value.match(
+        /^[北南]緯[\d]+度[\d]+分[\d]+.?[\d]*秒 [東西]経[\d]+度[\d]+分[\d]+.?[\d]*秒/
+      )
+    ) {
+      const llSplit = value
+        .replace(/[北東緯経|°|\s]/g, "")
+        .replace(/[南西]/g, "-")
+        .split(/[度分秒]/g);
+
+      const latlng = [
+        Number(llSplit[0]) +
+          Number(llSplit[1]) / 60 +
+          Number(llSplit[2]) / 3600,
+        Number(llSplit[3]) +
+          Number(llSplit[4]) / 60 +
+          Number(llSplit[5]) / 3600,
+      ];
+
+      setCastleData({
+        ...castleData,
+        latlng: {
+          lat: latlng[0].toFixed(5).toString(),
+          lng: latlng[1].toFixed(5).toString(),
+        },
+      });
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.item_box}>
@@ -315,16 +378,16 @@ const DataSet = () => {
             placeholder="緯度"
             value={castleData.latlng.lat}
             onChange={(e) => {
-              console.log("change");
-
-              const lat = String(e.target.value.match(/[\d]+.?[\d]*/));
-              setCastleData({
-                ...castleData,
-                latlng: {
-                  ...castleData.latlng,
-                  lat: lat === "null" ? "" : lat,
-                },
-              });
+              if (!strToLatlng(e.target.value)) {
+                const lat = String(e.target.value.match(/[\d]+.?[\d]*/));
+                setCastleData({
+                  ...castleData,
+                  latlng: {
+                    ...castleData.latlng,
+                    lat: lat === "null" ? "" : lat,
+                  },
+                });
+              }
             }}
             onBlur={onBlurLatlng}
           />
@@ -333,14 +396,16 @@ const DataSet = () => {
             placeholder="経度"
             value={castleData.latlng.lng}
             onChange={(e) => {
-              const lng = String(e.target.value.match(/[\d]+.?[\d]*/));
-              setCastleData({
-                ...castleData,
-                latlng: {
-                  ...castleData.latlng,
-                  lng: lng === "null" ? "" : lng,
-                },
-              });
+              if (!strToLatlng(e.target.value)) {
+                const lng = String(e.target.value.match(/[\d]+.?[\d]*/));
+                setCastleData({
+                  ...castleData,
+                  latlng: {
+                    ...castleData.latlng,
+                    lng: lng === "null" ? "" : lng,
+                  },
+                });
+              }
             }}
             onBlur={onBlurLatlng}
           />
@@ -435,7 +500,7 @@ const DataSet = () => {
         </p>
         <input
           type="text"
-          placeholder="1600"
+          placeholder="1610"
           value={castleData.build}
           className={styles.input_value}
           onChange={(e) => {
@@ -536,7 +601,8 @@ const DataSet = () => {
           <div className={styles.towerstructure_container}>
             <input
               type="text"
-              value={castleData.tower.constructure[0]}
+              placeholder="5"
+              value={castleData.tower.constructure[0] || ""}
               onChange={(e) => onChangeConstructure(e, 0)}
               onBlur={() => {
                 const constructure = castleData.tower.constructure;
@@ -547,7 +613,8 @@ const DataSet = () => {
             <span>層</span>
             <input
               type="text"
-              value={castleData.tower.constructure[1]}
+              placeholder="5"
+              value={castleData.tower.constructure[1] || ""}
               onChange={(e) => onChangeConstructure(e, 1)}
               onBlur={() => {
                 const constructure = castleData.tower.constructure;
