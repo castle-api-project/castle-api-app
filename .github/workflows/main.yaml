@@ -2,7 +2,7 @@ name: "publish"
 on:
   push:
     branches:
-      - release
+      - main
 
 jobs:
   publish-tauri:
@@ -15,19 +15,6 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v3
-      - name: Create dot env file
-      - shell: bash
-        run: |
-          touch .env
-          echo "NEXT_PUBLIC_FIREBASE_APIKEY=${{ secrets.NEXT_PUBLIC_FIREBASE_APIKEY }}" >> .env
-          echo "NEXT_PUBLIC_FIREBASE_APPID=${{ secrets.NEXT_PUBLIC_FIREBASE_APPID }}" >> .env
-          echo "NEXT_PUBLIC_FIREBASE_AUTHDOMAIN=${{ secrets.NEXT_PUBLIC_FIREBASE_AUTHDOMAIN }}" >> .env
-          echo "NEXT_PUBLIC_FIREBASE_MEASUREMENTID=${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENTID }}" >> .env
-          echo "NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID=${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID }}" >> .env
-          echo "NEXT_PUBLIC_FIREBASE_PROJECTID=${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECTID }}" >> .env
-          echo "NEXT_PUBLIC_FIREBASE_STORAGEBUCKET=${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGEBUCKET }}" >> .env
-
       - uses: actions/checkout@v3
       - name: setup node
         uses: actions/setup-node@v3
