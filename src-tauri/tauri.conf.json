@@ -1,13 +1,13 @@
 {
   "build": {
     "beforeDevCommand": "yarn dev",
-    "beforeBuildCommand": "yarn build",
+    "beforeBuildCommand": "yarn build && yarn export",
     "devPath": "http://localhost:3000",
-    "distDir": "../dist",
+    "distDir": "../out",
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "castle-api-app",
+    "productName": "tauri-app-3",
     "version": "0.0.0"
   },
   "tauri": {
@@ -21,19 +21,6 @@
         "create": true,
         "setPosition": true,
         "setTitle": true
-      },
-      "fs": {
-        "all": true,
-        "copyFile": true,
-        "createDir": true,
-        "exists": true,
-        "readDir": true,
-        "readFile": true,
-        "removeDir": true,
-        "removeFile": true,
-        "renameFile": true,
-        "scope": [],
-        "writeFile": true
       }
     },
     "bundle": {
@@ -51,7 +38,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "me.satooru65536",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -78,12 +65,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "resizable": true,
-        "title": "日本の城API.app",
         "height": 600,
-        "minHeight": 600,
-        "width": 800,
-        "minWidth": 800
+        "resizable": true,
+        "title": "tauri-app-3",
+        "width": 800
       }
     ]
   }

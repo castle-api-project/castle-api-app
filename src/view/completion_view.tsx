@@ -10,7 +10,7 @@ import { sleep } from "@/components/util";
 
 const CompletionView = () => {
   const router = useRouter();
-  const store = new Store(".settings.dat");
+  const store = new Store("castles.dat");
   const [d, setCastleData] = useRecoilState(CastleDataAtom);
   const [dbStatus, setDbStatus] = useState("接続中");
   const [msg, setMsg] = useState("接続中");

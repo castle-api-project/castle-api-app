@@ -8,6 +8,7 @@ import {
 } from "@/components/atom";
 import styles from "@/styles/data_set.module.scss";
 import {
+  CastleData,
   castleTypeList,
   categories,
   Categories,
@@ -30,6 +31,8 @@ const DataSet = () => {
   const [castleData, setCastleData] = useRecoilState(CastleDataAtom);
   const [dataErrs, setDataErrs] = useRecoilState(DataErrsAtom);
   const [isOffline, setIsOffline] = useState(!window.navigator.onLine);
+
+  const store = new Store("castles.dat");
 
   const getAddressByLatlng = ({ lat, lng }: { lat: number; lng: number }) => {
     const url = `https://geoapi.heartrails.com/api/json?method=searchByGeoLocation&x=${lng}&y=${lat}`;
@@ -75,6 +78,7 @@ const DataSet = () => {
             latlng: "",
           });
         }
+        void store.set("incomplete", castleData);
       })
       .catch();
   };
@@ -82,6 +86,7 @@ const DataSet = () => {
   const getLatlngByPlaceName = (prefecture: string, city: string) => {
     const areaNameSnap = getAreaName(prefecture, city);
     setCastleData({ ...castleData, area: areaNameSnap });
+    void store.set("incomplete", castleData);
     let url = "https://geoapi.heartrails.com/api/json?method=getTowns";
 
     if (prefecture !== "") url += `&prefecture=${prefecture}`;
@@ -178,6 +183,7 @@ const DataSet = () => {
           return alias !== "";
         }),
       });
+      void store.set("incomplete", castleData);
       router.push("/submit");
     }
   };
@@ -197,6 +203,7 @@ const DataSet = () => {
     setDataErrs({ ...dataErrs, latlng: latlngErr });
     setCastleData({ ...castleData, latlng: latlngToStr(latlngSnap) });
     getAddressByLatlng(digitDesignByLatlng(latlngSnap));
+    void store.set("incomplete", castleData);
   };
 
   const onBlurAlias = () => {
@@ -205,9 +212,10 @@ const DataSet = () => {
     });
     aliasesSnap.push("");
     setCastleData({ ...castleData, alias: aliasesSnap });
+    void store.set("incomplete", castleData);
   };
 
-  const onChangestructure = (
+  const onChangeStructure = (
     e: React.ChangeEvent<HTMLInputElement>,
     i: number
   ) => {
@@ -217,9 +225,10 @@ const DataSet = () => {
     const tower = structuredClone(castleData.tower);
     tower.structure[i] = value;
     setCastleData({ ...castleData, tower });
+    void store.set("incomplete", castleData);
   };
 
-  const onChangeConstrctures = (
+  const onChangeStrctures = (
     e: React.ChangeEvent<HTMLInputElement>,
     structure: Structures,
     isRemain = true
@@ -251,6 +260,7 @@ const DataSet = () => {
           }),
         });
     }
+    void store.set("incomplete", castleData);
   };
 
   const onChangeCategories = (
@@ -273,6 +283,7 @@ const DataSet = () => {
         ],
       });
     }
+    void store.set("incomplete", castleData);
   };
 
   const strToLatlng = (value: string) => {
@@ -323,14 +334,13 @@ const DataSet = () => {
   };
 
   const sendData = async () => {
-    const store = new Store(".settings.dat");
     const values = await store.values();
     await store.clear();
 
     if (isOffline) return;
     values.map(async (d: any) => {
       console.log(d.name);
-      
+
       if (!d.latlng || !d.latlng.lat || !d.latlng.lng) return;
 
       try {
@@ -345,9 +355,16 @@ const DataSet = () => {
     });
   };
 
+  const dataInit = async () => {
+    const incompleteData: CastleData = await store.get("incomplete");
+    console.log(incompleteData);
+    if (incompleteData) setCastleData(incompleteData);
+  };
+
   useEffect(() => {
     window.addEventListener("offline", () => setIsOffline(true));
     window.addEventListener("online", () => setIsOffline(false));
+    dataInit();
     sendData();
   }, []);
 
@@ -365,6 +382,7 @@ const DataSet = () => {
           className={styles.input_value}
           onChange={(e) => {
             setCastleData({ ...castleData, name: e.target.value });
+            void store.set("incomplete", castleData);
           }}
           onBlur={() => {
             if (castleData.name !== "") setDataErrs({ ...dataErrs, name: "" });
@@ -398,6 +416,8 @@ const DataSet = () => {
                   ...castleData,
                   alias: alias.flat(),
                 });
+
+                void store.set("incomplete", castleData);
               }}
               onBlur={onBlurAlias}
             />
@@ -425,6 +445,7 @@ const DataSet = () => {
                     lat: lat === "null" ? "" : lat,
                   },
                 });
+                void store.set("incomplete", castleData);
               }
             }}
             onBlur={onBlurLatlng}
@@ -443,6 +464,7 @@ const DataSet = () => {
                     lng: lng === "null" ? "" : lng,
                   },
                 });
+                void store.set("incomplete", castleData);
               }
             }}
             onBlur={onBlurLatlng}
@@ -460,9 +482,10 @@ const DataSet = () => {
           placeholder="愛知県"
           value={castleData.pref}
           className={styles.input_value}
-          onChange={(e) =>
-            setCastleData({ ...castleData, pref: e.target.value })
-          }
+          onChange={(e) => {
+            setCastleData({ ...castleData, pref: e.target.value });
+            void store.set("incomplete", castleData);
+          }}
           onBlur={() => {
             getLatlngByPlaceName(castleData.pref, castleData.city);
             if (castleData.pref !== "") setDataErrs({ ...dataErrs, pref: "" });
@@ -480,9 +503,10 @@ const DataSet = () => {
           placeholder="尾張"
           value={castleData.area}
           className={styles.input_value}
-          onChange={(e) =>
-            setCastleData({ ...castleData, area: e.target.value })
-          }
+          onChange={(e) => {
+            setCastleData({ ...castleData, area: e.target.value });
+            void store.set("incomplete", castleData);
+          }}
           onBlur={() => {
             if (castleData.area !== "") setDataErrs({ ...dataErrs, area: "" });
           }}
@@ -501,6 +525,7 @@ const DataSet = () => {
           className={styles.input_value}
           onChange={(e) => {
             setCastleData({ ...castleData, city: e.target.value });
+            void store.set("incomplete", castleData);
           }}
           onBlur={() => {
             getLatlngByPlaceName(castleData.pref, castleData.city);
@@ -518,12 +543,13 @@ const DataSet = () => {
           placeholder="愛知県名古屋市中区本丸1-1"
           value={castleData.address}
           className={styles.textarea_address}
-          onChange={(e) =>
+          onChange={(e) => {
             setCastleData({
               ...castleData,
               address: e.target.value.replace("\n", ""),
-            })
-          }
+            });
+            void store.set("incomplete", castleData);
+          }}
           onBlur={() => {
             if (castleData.address !== "")
               setDataErrs({ ...dataErrs, address: "" });
@@ -546,6 +572,7 @@ const DataSet = () => {
               ...castleData,
               build: String(e.target.value.match(/[0-9]*/)),
             });
+            void store.set("incomplete", castleData);
           }}
           onBlur={() => {
             if (castleData.build !== "")
@@ -570,9 +597,10 @@ const DataSet = () => {
                     name="scale"
                     id={`scale_${key}`}
                     checked={castleData.scale === Number(key)}
-                    onChange={() =>
-                      setCastleData({ ...castleData, scale: Number(key) })
-                    }
+                    onChange={() => {
+                      setCastleData({ ...castleData, scale: Number(key) });
+                      void store.set("incomplete", castleData);
+                    }}
                   />
                   <label htmlFor={`scale_${key}`}>
                     {key}:{scale[key]}
@@ -597,7 +625,10 @@ const DataSet = () => {
                   name="castle_type"
                   id={`type_${i}`}
                   checked={type === castleData.type}
-                  onChange={() => setCastleData({ ...castleData, type })}
+                  onChange={() => {
+                    setCastleData({ ...castleData, type });
+                    void store.set("incomplete", castleData);
+                  }}
                 />
                 <label htmlFor={`type_${i}`}>{type}</label>
               </div>
@@ -620,6 +651,7 @@ const DataSet = () => {
             const tower = structuredClone(castleData.tower);
             tower.isExist = !tower.isExist;
             setCastleData({ ...castleData, tower });
+            void store.set("incomplete", castleData);
           }}
         />
         <label htmlFor="is_exist_tower" className={styles.is_exist}>
@@ -641,7 +673,7 @@ const DataSet = () => {
               type="text"
               placeholder="5"
               value={castleData.tower.structure[0] || ""}
-              onChange={(e) => onChangestructure(e, 0)}
+              onChange={(e) => onChangeStructure(e, 0)}
               onBlur={() => {
                 const structure = castleData.tower.structure;
                 if (structure[0] !== 0 && structure[1] !== 0)
@@ -653,7 +685,7 @@ const DataSet = () => {
               type="text"
               placeholder="5"
               value={castleData.tower.structure[1] || ""}
-              onChange={(e) => onChangestructure(e, 1)}
+              onChange={(e) => onChangeStructure(e, 1)}
               onBlur={() => {
                 const structure = castleData.tower.structure;
                 if (structure[0] !== 0 && structure[1] !== 0)
@@ -676,6 +708,7 @@ const DataSet = () => {
                       const tower = structuredClone(castleData.tower);
                       tower.condition = condition;
                       setCastleData({ ...castleData, tower });
+                      void store.set("incomplete", castleData);
                     }}
                   />
                   <label htmlFor={`condition_${i}`}>{condition}</label>
@@ -700,7 +733,7 @@ const DataSet = () => {
                   name="remain"
                   id={`remain_${i}`}
                   checked={castleData.remains.includes(structure)}
-                  onChange={(e) => onChangeConstrctures(e, structure)}
+                  onChange={(e) => onChangeStrctures(e, structure)}
                 />
                 <label htmlFor={`remain_${i}`}>{structure}</label>
               </div>
@@ -723,7 +756,7 @@ const DataSet = () => {
                   name="restoration"
                   id={`restoration_${i}`}
                   checked={castleData.restorations.includes(structure)}
-                  onChange={(e) => onChangeConstrctures(e, structure, false)}
+                  onChange={(e) => onChangeStrctures(e, structure, false)}
                 />
                 <label htmlFor={`restoration_${i}`}>{structure}</label>
               </div>
@@ -765,9 +798,10 @@ const DataSet = () => {
           placeholder="https://example.com/..."
           value={castleData.site}
           className={styles.input_value}
-          onChange={(e) =>
-            setCastleData({ ...castleData, site: e.target.value })
-          }
+          onChange={(e) => {
+            setCastleData({ ...castleData, site: e.target.value });
+            void store.set("incomplete", castleData);
+          }}
         />
       </div>
 
@@ -781,9 +815,10 @@ const DataSet = () => {
           placeholder="書籍: マニアックな城1万選"
           value={castleData.reference}
           className={styles.input_value}
-          onChange={(e) =>
-            setCastleData({ ...castleData, reference: e.target.value })
-          }
+          onChange={(e) => {
+            setCastleData({ ...castleData, reference: e.target.value });
+            void store.set("incomplete", castleData);
+          }}
         />
       </div>
 
