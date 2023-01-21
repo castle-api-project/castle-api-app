@@ -21,7 +21,7 @@ export const CastleDataAtom = atom<CastleData>({
   key: "castleData",
   default: {
     name: "名古屋城",
-    alias: ["金城", ""],
+    alias: ["金城"],
     latlng: {
       lat: "35.18559",
       lng: "136.89952",
@@ -35,10 +35,10 @@ export const CastleDataAtom = atom<CastleData>({
     type: "平城",
     tower: {
       isExist: true,
-      constructure: [5, 5],
+      structure: [5, 5],
       condition: "復元",
     },
-    remains: ["櫓", "堀", "蔵"],
+    remains: ["堀", "土塁", "石垣", "曲輪", "虎口", "井戸", "櫓", "庭園"],
     restorations: ["櫓", "天守閣"],
     categories: ["特別史跡", "百名城", "三大名城"],
     site: "https://nagoya-castle.example.com/",
@@ -60,7 +60,7 @@ export const DataErrsAtom = atom({
     scale: "",
     type: "",
     isTowerExist: "",
-    towerConstructure: "",
+    towerstructure: "",
     remains: "",
     restorations: "",
     categories: "",

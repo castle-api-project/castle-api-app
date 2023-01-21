@@ -22,10 +22,19 @@ body {
 }
 
 * {
-  font-family: 'Noto Sans JP', Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Noto Sans JP", Avenir, Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+
+  &::-moz-selection {
+    color: var(--color-on-primary);
+    background-color: var(--color-secoundary);
+  }
+  &::selection {
+    color: var(--color-on-primary);
+    background-color: var(--color-secoundary);
+  }
 }
 
 input[type="number"]::-webkit-outer-spin-button,

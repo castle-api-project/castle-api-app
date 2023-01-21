@@ -154,10 +154,10 @@ const DataSet = () => {
 
     // 天守
     if (castleData.tower.isExist) {
-      const constructure = castleData.tower.constructure;
-      if (constructure[0] === 0 || constructure[1] === 0)
-        errs.towerConstructure = "入力してください";
-      else errs.towerConstructure = "";
+      const structure = castleData.tower.structure;
+      if (structure[0] === 0 || structure[1] === 0)
+        errs.towerstructure = "入力してください";
+      else errs.towerstructure = "";
     }
 
     let isExistError =
@@ -169,6 +169,12 @@ const DataSet = () => {
       errs.submit = "正しくないデータがあります";
       setDataErrs(errs);
     } else {
+      setCastleData({
+        ...castleData,
+        alias: castleData.alias.filter((alias) => {
+          return alias !== "";
+        }),
+      });
       router.push("/submit");
     }
   };
@@ -198,7 +204,7 @@ const DataSet = () => {
     setCastleData({ ...castleData, alias: aliasesSnap });
   };
 
-  const onChangeConstructure = (
+  const onChangestructure = (
     e: React.ChangeEvent<HTMLInputElement>,
     i: number
   ) => {
@@ -206,7 +212,7 @@ const DataSet = () => {
     if (Number.isNaN(value)) return;
 
     const tower = structuredClone(castleData.tower);
-    tower.constructure[i] = value;
+    tower.structure[i] = value;
     setCastleData({ ...castleData, tower });
   };
 
@@ -594,7 +600,7 @@ const DataSet = () => {
           <p className={styles.title}>
             <span>天守構造*</span>
             <span className={styles.err_message}>
-              {dataErrs.towerConstructure}
+              {dataErrs.towerstructure}
             </span>
           </p>
 
@@ -602,24 +608,24 @@ const DataSet = () => {
             <input
               type="text"
               placeholder="5"
-              value={castleData.tower.constructure[0] || ""}
-              onChange={(e) => onChangeConstructure(e, 0)}
+              value={castleData.tower.structure[0] || ""}
+              onChange={(e) => onChangestructure(e, 0)}
               onBlur={() => {
-                const constructure = castleData.tower.constructure;
-                if (constructure[0] !== 0 && constructure[1] !== 0)
-                  setDataErrs({ ...dataErrs, towerConstructure: "" });
+                const structure = castleData.tower.structure;
+                if (structure[0] !== 0 && structure[1] !== 0)
+                  setDataErrs({ ...dataErrs, towerstructure: "" });
               }}
             />
             <span>層</span>
             <input
               type="text"
               placeholder="5"
-              value={castleData.tower.constructure[1] || ""}
-              onChange={(e) => onChangeConstructure(e, 1)}
+              value={castleData.tower.structure[1] || ""}
+              onChange={(e) => onChangestructure(e, 1)}
               onBlur={() => {
-                const constructure = castleData.tower.constructure;
-                if (constructure[0] !== 0 && constructure[1] !== 0)
-                  setDataErrs({ ...dataErrs, towerConstructure: "" });
+                const structure = castleData.tower.structure;
+                if (structure[0] !== 0 && structure[1] !== 0)
+                  setDataErrs({ ...dataErrs, towerstructure: "" });
               }}
             />
             <span>階</span>

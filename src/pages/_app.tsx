@@ -1,6 +1,7 @@
 import type { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
 import { Noto_Sans_JP } from "@next/font/google";
+import { initializeFirebaseApp } from "@/lib/firebase";
 import "../styles/globals.scss";
 
 const noto = Noto_Sans_JP({
@@ -8,7 +9,7 @@ const noto = Noto_Sans_JP({
   preload: false,
 });
 
-// This default export is required in a new `pages/_app.js` file.
+initializeFirebaseApp()
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <main className={noto.className}>

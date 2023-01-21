@@ -81,8 +81,8 @@ const DataView = () => {
             <div>
               <span className={styles.title}>天守構造</span>
               <span className={styles.value}>
-                {castleData.tower.constructure[0]}層
-                {castleData.tower.constructure[1]}階
+                {castleData.tower.structure[0]}層
+                {castleData.tower.structure[1]}階
                 {" (" + castleData.tower.condition + ")"}
               </span>
             </div>

@@ -114,7 +114,7 @@ export type CastleData = {
   type: CastleType;
   tower: {
     isExist: boolean;
-    constructure: [number, number];
+    structure: [number, number];
     condition: TowerCondtion;
   };
   remains: Structures[];
