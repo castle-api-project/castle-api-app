@@ -2,9 +2,9 @@
 name = "castle-api-app"
 version = "0.0.0"
 description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+authors = ["SatooRu65536"]
+license = "MIT"
+repository = "https://github.com/SatooRu65536/castle-api-app"
 edition = "2021"
 rust-version = "1.57"
 
