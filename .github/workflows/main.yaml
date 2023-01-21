@@ -16,7 +16,6 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Create dot env file
-        uses: actions/checkout@v3
         run: |
           touch .env
           echo NEXT_PUBLIC_FIREBASE_APIKEY=${{ secrets.NEXT_PUBLIC_FIREBASE_APIKEY }} >> .env
