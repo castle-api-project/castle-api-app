@@ -123,3 +123,5 @@ export type CastleData = {
   site: string;
   reference: string;
 };
+
+export const sleep = (t: number) => new Promise((resolve) => setTimeout(resolve, t));

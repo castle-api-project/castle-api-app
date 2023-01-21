@@ -52,22 +52,27 @@
         }
       }
       .message {
+        height: 25px;
         color: var(--color-on-primary);
       }
     }
 
     .buttom_container {
-        position: absolute;
-        bottom: 50px;
+      position: absolute;
+      bottom: 50px;
 
-        .button {
-            padding: 5px 10px;
-            color: var(--color-on-primary);
-            background-color: var(--color-secoundary);
-            display: inline-block;
-            border-radius: 10px;
-            cursor: pointer;
+      .button {
+        padding: 5px 10px;
+        color: var(--color-on-primary);
+        background-color: var(--color-secoundary);
+        display: inline-block;
+        border-radius: 10px;
+        cursor: pointer;
+
+        &:nth-child(n + 2) {
+          margin-left: 10px;
         }
+      }
     }
   }
 }

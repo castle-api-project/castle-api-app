@@ -14,3 +14,4 @@ const app = initializeApp(firebaseConfig);
 export const initializeFirebaseApp = () =>
   getApps().length ? getApp() : initializeApp(firebaseConfig);
 
+  

@@ -9,7 +9,7 @@ const noto = Noto_Sans_JP({
   preload: false,
 });
 
-initializeFirebaseApp()
+initializeFirebaseApp();
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <main className={noto.className}>

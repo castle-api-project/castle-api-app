@@ -18,8 +18,10 @@ import {
   structures,
   towerConditionList,
 } from "@/components/util";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AreaNames, getAreaName, Prefs } from "@/components/area";
+import { Store } from "tauri-plugin-store-api";
+import { getDatabase, push, ref } from "@firebase/database";
 
 const DataSet = () => {
   const router = useRouter();
@@ -27,6 +29,7 @@ const DataSet = () => {
   const [mapCenterPos, setMapCenterPos] = useRecoilState(MapCenterPosAtom);
   const [castleData, setCastleData] = useRecoilState(CastleDataAtom);
   const [dataErrs, setDataErrs] = useRecoilState(DataErrsAtom);
+  const [isOffline, setIsOffline] = useState(!window.navigator.onLine);
 
   const getAddressByLatlng = ({ lat, lng }: { lat: number; lng: number }) => {
     const url = `https://geoapi.heartrails.com/api/json?method=searchByGeoLocation&x=${lng}&y=${lat}`;
@@ -318,6 +321,35 @@ const DataSet = () => {
       return false;
     }
   };
+
+  const sendData = async () => {
+    const store = new Store(".settings.dat");
+    const values = await store.values();
+    await store.clear();
+
+    if (isOffline) return;
+    values.map(async (d: any) => {
+      console.log(d.name);
+      
+      if (!d.latlng || !d.latlng.lat || !d.latlng.lng) return;
+
+      try {
+        const db = getDatabase();
+        const dbRef = ref(db, `${d.pref}/${d.area}/${d.city}/${d.name}`);
+        await push(dbRef, {
+          json: JSON.stringify(d),
+        });
+      } catch (e) {
+        await store.set(`${d.latlng.lat}-${d.latlng.lng}`, d);
+      }
+    });
+  };
+
+  useEffect(() => {
+    window.addEventListener("offline", () => setIsOffline(true));
+    window.addEventListener("online", () => setIsOffline(false));
+    sendData();
+  }, []);
 
   return (
     <div className={styles.container}>

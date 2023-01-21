@@ -5,12 +5,17 @@ import { getDatabase, push, ref } from "@firebase/database";
 import { useEffect, useState } from "react";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import { useRouter } from "next/router";
+import { Store } from "tauri-plugin-store-api";
+import { sleep } from "@/components/util";
 
 const CompletionView = () => {
   const router = useRouter();
+  const store = new Store(".settings.dat");
   const [d, setCastleData] = useRecoilState(CastleDataAtom);
-  const [dbStatus, setDbStatus] = useState("connecting");
-  const [msg, setMsg] = useState("");
+  const [dbStatus, setDbStatus] = useState("接続中");
+  const [msg, setMsg] = useState("接続中");
+  const [isOffline, setIsOffline] = useState(!window.navigator.onLine);
+  const [isSent, setIsSent] = useState(false);
   const [code, setCode] = useState(() => {
     const build = d.build === "" ? "null" : Number(d.build);
     const tower = d.tower.isExist
@@ -42,20 +47,31 @@ const CompletionView = () => {
   });
 
   const sendData = async () => {
-    console.log("start");
+    setDbStatus("送信中");
+    setMsg("送信中");
+    await sleep(500);
+
+    if (isSent) {
+      setDbStatus("送信済み");
+      setMsg("送信済みです");
+      return;
+    }
+
     try {
-      setDbStatus("sending");
       const db = getDatabase();
       const dbRef = ref(db, `${d.pref}/${d.area}/${d.city}/${d.name}`);
-      await push(dbRef, {
-        json: JSON.stringify(d),
-      });
-      setDbStatus("sent");
+      if (isOffline) throw new Error("NetworkError");
+      await push(dbRef, { json: JSON.stringify(d) });
+      setDbStatus("完了!");
       setMsg("データを送信しました");
+      setIsSent(true);
+      await store.delete(`${d.latlng.lat}-${d.latlng.lng}`);
     } catch (e) {
-      console.log(e);
-      setDbStatus("error");
+      if (isOffline) setDbStatus("ネット未接続");
+      else setDbStatus("失敗");
+
       setMsg("次回起動時に再送信します");
+      await store.set(`${d.latlng.lat}-${d.latlng.lng}`, d);
     }
   };
 
@@ -89,6 +105,8 @@ const CompletionView = () => {
   };
 
   useEffect(() => {
+    window.addEventListener("offline", () => setIsOffline(true));
+    window.addEventListener("online", () => setIsOffline(false));
     sendData();
   }, []);
 
@@ -101,12 +119,8 @@ const CompletionView = () => {
       <div className={styles.right_box}>
         <div className={styles.centering_container}>
           <p className={styles.status}>
-            {dbStatus === "connecting" && "接続中"}
-            {dbStatus === "sending" && "送信中"}
-            {dbStatus === "sent" && "完了!"}
-            {dbStatus === "error" && "失敗"}
-
-            {["connecting", "sending"].includes(dbStatus) && (
+            {dbStatus}
+            {["接続中", "送信中"].includes(dbStatus) && (
               <HourglassBottomIcon className={styles.loading_icon} />
             )}
           </p>
@@ -115,6 +129,11 @@ const CompletionView = () => {
         </div>
 
         <div className={styles.buttom_container}>
+          {
+            <span className={styles.button} onClick={sendData}>
+              再送信
+            </span>
+          }
           <span className={styles.button} onClick={toTop}>
             トップにもどる
           </span>

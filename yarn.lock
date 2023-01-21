@@ -1739,6 +1739,12 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
+"tauri-plugin-store-api@https://github.com/tauri-apps/tauri-plugin-store":
+  version "0.0.0"
+  resolved "https://github.com/tauri-apps/tauri-plugin-store#c71665bf5dcf48ae70a88d622eb38b2548b60a5d"
+  dependencies:
+    "@tauri-apps/api" "^1.2.0"
+
 to-fast-properties@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/to-fast-properties/-/to-fast-properties-2.0.0.tgz"
