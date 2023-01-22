@@ -50,8 +50,8 @@ const CompletionView = () => {
     setDbStatus("送信中");
     setMsg("送信中");
     await sleep(500);
-    let isSuccess = false;
 
+    let isSuccess = true;
     try {
       if (d.name.slice(0, 1) === "-" || d.name.slice(-1) === "-") {
         setDbStatus("送信しません");
@@ -69,13 +69,13 @@ const CompletionView = () => {
       setDbStatus("完了!");
       setMsg("データを送信しました");
       setIsSent(true);
-      isSuccess = true;
     } catch (e) {
+      isSuccess = false;
       if (isOffline) setDbStatus("ネット未接続");
       else setDbStatus("失敗");
-
-      setMsg("次回起動時に再送信します");
+      setMsg("送信に失敗しました");
       await store.set(`${d.latlng.lat}-${d.latlng.lng}`, d);
+      setMsg("次回起動時に再送信します");
     }
     try {
       if (isSuccess) await store.delete(`${d.latlng.lat}-${d.latlng.lng}`);
@@ -113,10 +113,12 @@ const CompletionView = () => {
   };
 
   useEffect(() => {
-    void store.delete("incomplete");
     window.addEventListener("offline", () => setIsOffline(true));
     window.addEventListener("online", () => setIsOffline(false));
     sendData();
+    try {
+      void store.delete("incomplete");
+    } catch {}
   }, []);
 
   return (

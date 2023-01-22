@@ -21,7 +21,13 @@ const Report = () => {
 
     const date = new Date();
     const time = Math.floor(date.getTime() / 1000);
-    const reportSendTime = await store.get("report_send_time");
+    let reportSendTime = 0;
+
+    try {
+      reportSendTime = await store.get("report_send_time");
+    } catch {
+      reportSendTime = Number(localStorage.getItem("report_send_time"));
+    }
 
     if (report.length < 15) {
       setDbStatus("15文字以上入力してください");
@@ -34,15 +40,21 @@ const Report = () => {
       return;
     }
 
+    let isSuccess = true;
     try {
       const db = getDatabase();
       const dbRef = ref(db, "report");
       await push(dbRef, { msg: report });
       setDbStatus("送信しました");
-      await store.set("report_send_time", time);
       setReport("");
     } catch (e) {
+      isSuccess = false;
       setDbStatus("送信に失敗しました");
+    }
+    try {
+      if (isSuccess) await store.set("report_send_time", time);
+    } catch {
+      if (isSuccess) localStorage.setItem("report_send_time", time.toString());
     }
   };
 
