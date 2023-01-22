@@ -63,7 +63,7 @@ const CompletionView = () => {
         return;
       }
       const db = getDatabase();
-      const dbRef = ref(db, `${d.pref}/${d.area}/${d.city}/${d.name}`);
+      const dbRef = ref(db, `castles/${d.pref}/${d.area}/${d.city}/${d.name}`);
       if (isOffline) throw new Error("NetworkError");
       await push(dbRef, { json: JSON.stringify(d) });
       setDbStatus("完了!");

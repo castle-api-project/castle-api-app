@@ -74,7 +74,7 @@ export const towerConditionList = [
   "復元",
   "復興",
   "模擬",
-  "非現像",
+  "非現存",
 ] as const;
 export type TowerCondtion = typeof towerConditionList[number];
 
