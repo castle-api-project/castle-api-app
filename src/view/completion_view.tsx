@@ -51,13 +51,16 @@ const CompletionView = () => {
     setMsg("送信中");
     await sleep(500);
 
-    if (isSent) {
-      setDbStatus("送信済み");
-      setMsg("送信済みです");
-      return;
-    }
-
     try {
+      if (d.name.slice(0, 1) === "-" || d.name.slice(-1) === "-") {
+        setDbStatus("送信しません");
+        setMsg("送信しない設定です");
+        return;
+      } else if (isSent) {
+        setDbStatus("送信済み");
+        setMsg("送信済みです");
+        return;
+      }
       const db = getDatabase();
       const dbRef = ref(db, `${d.pref}/${d.area}/${d.city}/${d.name}`);
       if (isOffline) throw new Error("NetworkError");
