@@ -22,7 +22,7 @@ const CompletionView = () => {
       ? "null"
       : `{
     structure: ${JSON.stringify(d.tower.structure)},
-    condition: "復元",
+    condition: "${d.tower.condition}",
   }`;
 
     return `{
