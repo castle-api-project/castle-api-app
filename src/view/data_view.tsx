@@ -7,6 +7,7 @@ import styles from "@/styles/data_view.module.scss";
 import { CastleDataAtom } from "@/components/atom";
 import { scale } from "@/components/util";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
 
 const DataView = () => {
   const [castleData, setCastleData] = useRecoilState(CastleDataAtom);
@@ -179,6 +180,10 @@ const DataView = () => {
           完了
         </Link>
       </div>
+
+      <Link href={"/report"} className={styles.report_container}>
+        <ReportGmailerrorredIcon className={styles.report} />
+      </Link>
     </div>
   );
 };

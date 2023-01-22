@@ -23,6 +23,8 @@ import React, { useEffect, useState } from "react";
 import { AreaNames, getAreaName, Prefs } from "@/components/area";
 import { Store } from "tauri-plugin-store-api";
 import { getDatabase, push, ref } from "@firebase/database";
+import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
+import Link from "next/link";
 
 const DataSet = () => {
   const router = useRouter();
@@ -828,6 +830,10 @@ const DataSet = () => {
         </div>
         <p className={styles.err_message}>{dataErrs.submit}</p>
       </div>
+
+      <Link href={"/report"} className={styles.report_container}>
+        <ReportGmailerrorredIcon className={styles.report} />
+      </Link>
     </div>
   );
 };

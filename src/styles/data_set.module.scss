@@ -123,3 +123,20 @@
     font-weight: bold;
   }
 }
+
+.report_container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  
+  .report {
+    font-size: 30px !important;
+    color: var(--color-on-primary);
+    transition: 0.5s;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--color-tertiary);
+    }
+  }
+}

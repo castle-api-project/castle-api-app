@@ -1,6 +1,6 @@
 [package]
 name = "castle-api-app"
-version = "1.0.0"
+version = "1.0.1"
 description = "A Tauri App"
 authors = ["SatooRu65536"]
 license = "MIT"

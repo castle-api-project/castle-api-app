@@ -105,6 +105,7 @@ const CompletionView = () => {
   };
 
   useEffect(() => {
+    void store.delete("incomplete");
     window.addEventListener("offline", () => setIsOffline(true));
     window.addEventListener("online", () => setIsOffline(false));
     sendData();

@@ -1,0 +1,72 @@
+.report_container {
+  padding: 80px;
+  color: var(--color-on-primary);
+
+  .title {
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .report_box {
+    .box {
+      display: flex;
+
+      textarea {
+        height: 100px;
+        width: 500px;
+        padding: 10px;
+        margin: 10px 0 0 20px;
+        font-size: 1.2rem;
+      }
+
+      .submit {
+        width: 60px;
+        height: 30px;
+        margin: auto 0 0 20px;
+        line-height: 30px;
+        text-align: center;
+        border-radius: 5px;
+        background-color: var(--color-secoundary);
+        display: inline-block;
+        cursor: pointer;
+      }
+    }
+
+    .status_message {
+      height: 20px;
+      margin-left: 20px;
+    }
+  }
+
+  .text_container {
+    margin-top: 40px;
+    font-size: 18px;
+  }
+
+  .usage_container {
+    margin-top: 30px;
+    cursor: pointer;
+
+    .mui_icon {
+      margin-left: 10px;
+      vertical-align: top;
+    }
+  }
+
+  .back_container {
+    position: fixed;
+    bottom: 40px;
+    left: 60px;
+
+    .back {
+      font-size: 30px;
+      color: var(--color-on-primary);
+      transition: 0.5s;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--color-tertiary);
+      }
+    }
+  }
+}
