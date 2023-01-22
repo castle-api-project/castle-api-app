@@ -50,6 +50,7 @@ const CompletionView = () => {
     setDbStatus("送信中");
     setMsg("送信中");
     await sleep(500);
+    let isSuccess = false;
 
     try {
       if (d.name.slice(0, 1) === "-" || d.name.slice(-1) === "-") {
@@ -68,7 +69,7 @@ const CompletionView = () => {
       setDbStatus("完了!");
       setMsg("データを送信しました");
       setIsSent(true);
-      await store.delete(`${d.latlng.lat}-${d.latlng.lng}`);
+      isSuccess = true;
     } catch (e) {
       if (isOffline) setDbStatus("ネット未接続");
       else setDbStatus("失敗");
@@ -76,6 +77,10 @@ const CompletionView = () => {
       setMsg("次回起動時に再送信します");
       await store.set(`${d.latlng.lat}-${d.latlng.lng}`, d);
     }
+    try {
+      if (isSuccess) await store.delete(`${d.latlng.lat}-${d.latlng.lng}`);
+      else await store.set(`${d.latlng.lat}-${d.latlng.lng}`, d);
+    } catch {}
   };
 
   const toTop = () => {

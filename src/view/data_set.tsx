@@ -168,6 +168,8 @@ const DataSet = () => {
       if (structure[0] === 0 || structure[1] === 0)
         errs.towerstructure = "入力してください";
       else errs.towerstructure = "";
+    } else {
+      errs.towerstructure = "";
     }
 
     let isExistError =
