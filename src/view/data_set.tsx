@@ -156,10 +156,9 @@ const DataSet = () => {
     else errs.address = "";
 
     // 築城年
-    if (castleData.build.match(/\D/))
-      errs.build = "数字以外は入力できません";
+    if (castleData.build.match(/\D/)) errs.build = "数字以外は入力できません";
     else if (castleData.build.match(/^[0-9]{1,4}$/)) errs.build = "";
-    else errs.build = "桁が間違っています";
+    else if (castleData.build !== "") errs.build = "桁が間違っています";
 
     // 天守
     if (castleData.tower.isExist) {
