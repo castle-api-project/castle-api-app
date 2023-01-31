@@ -156,8 +156,7 @@ const DataSet = () => {
     else errs.address = "";
 
     // 築城年
-    if (castleData.build === "") errs.build = "入力してください";
-    else if (castleData.build.match(/\D/))
+    if (castleData.build.match(/\D/))
       errs.build = "数字以外は入力できません";
     else if (castleData.build.match(/^[0-9]{1,4}$/)) errs.build = "";
     else errs.build = "桁が間違っています";
@@ -563,7 +562,7 @@ const DataSet = () => {
 
       <div className={styles.item_box}>
         <p className={styles.title}>
-          <span>築城年*</span>
+          <span>築城年</span>
           <span className={styles.err_message}>{dataErrs.build}</span>
         </p>
         <input
