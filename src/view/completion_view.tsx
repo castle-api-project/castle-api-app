@@ -19,14 +19,14 @@ const CompletionView = () => {
   const [code, setCode] = useState(() => {
     const build = d.build === "" ? "null" : Number(d.build);
     const tower = d.tower.isExist
-      ? "null"
-      : `{
+      ? `{
     structure: ${JSON.stringify(d.tower.structure)},
     condition: "${d.tower.condition}",
-  }`;
+  }`
+      : "null";
 
     return `{
-  name: "${d.name}",
+  name: "${d.name.replace("-", "")}",
   alias: ${JSON.stringify(d.alias)},
   build: ${build},
   scale: ${d.scale},

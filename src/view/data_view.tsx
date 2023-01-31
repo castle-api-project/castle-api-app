@@ -27,7 +27,7 @@ const DataView = () => {
   return (
     <div className={styles.submit_container}>
       <div className={styles.header}>
-        <h2>{castleData.name}</h2>
+        <h2>{castleData.name.replace("-", "")}</h2>
         <div className={styles.alias_box}>
           <span className={styles.title}>別名</span>
           {castleData.alias.map((alias, i) => {
